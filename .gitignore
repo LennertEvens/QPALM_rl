@@ -5,8 +5,10 @@ build
 /dist
 /dist-debug
 /package
+/toolchains
 /staging
 __pycache__
+/pycutest_cache_holder
 *.pyc
 products
 *.mod

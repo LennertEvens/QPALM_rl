@@ -1,11 +1,11 @@
 import numpy as np
 import scipy.sparse as sp
-import qpalm
+import qpalm_rl
 import pytest
 
 
 def test_simple_3x4():
-    data = qpalm.Data(3, 4)
+    data = qpalm_rl.Data(3, 4)
 
     row = np.array([0, 0, 1, 1])
     col = np.array([0, 1, 0, 1])
@@ -22,8 +22,8 @@ def test_simple_3x4():
     val = np.array([1, 1, 1, 1, 1, 1])
     data.A = sp.csc_matrix((val, (row, col)), shape=(4, 3))
 
-    settings = qpalm.Settings()
-    solver = qpalm.Solver(data, settings)
+    settings = qpalm_rl.Settings()
+    solver = qpalm_rl.Solver(data, settings)
     solver.solve()
     sol_x = solver.solution.x
     print(sol_x, solver.info.iter)
@@ -39,7 +39,7 @@ def test_simple_3x4():
 
 def test_solution_lifetime():
     def scope():
-        data = qpalm.Data(3, 4)
+        data = qpalm_rl.Data(3, 4)
         row = np.array([0, 0, 1, 1])
         col = np.array([0, 1, 0, 1])
         val = np.array([1, -1, -1, 2])
@@ -55,8 +55,8 @@ def test_solution_lifetime():
         val = np.array([1, 1, 1, 1, 1, 1])
         data.A = sp.csc_matrix((val, (row, col)), shape=(4, 3))
 
-        settings = qpalm.Settings()
-        solver = qpalm.Solver(data, settings)
+        settings = qpalm_rl.Settings()
+        solver = qpalm_rl.Solver(data, settings)
         solver.solve()
         sol_x = solver.solution.x
         return sol_x
@@ -70,7 +70,7 @@ def test_solution_lifetime():
 
 
 def test_data_element_access():
-    data = qpalm.Data(3, 4)
+    data = qpalm_rl.Data(3, 4)
     row = np.array([0, 0, 1, 1])
     col = np.array([0, 1, 0, 1])
     val = np.array([1, -1, -1, 2])
@@ -113,7 +113,7 @@ def test_data_element_access():
 
 def test_data_lifetime():
     def get_q():
-        data = qpalm.Data(3, 4)
+        data = qpalm_rl.Data(3, 4)
         data.q = np.array([-2, -6, 1])
         return data.q
 
@@ -125,7 +125,7 @@ def test_data_lifetime():
 
 
 def test_invalid_bounds():
-    data = qpalm.Data(3, 4)
+    data = qpalm_rl.Data(3, 4)
 
     row = np.array([0, 0, 1, 1])
     col = np.array([0, 1, 0, 1])
@@ -142,15 +142,15 @@ def test_invalid_bounds():
     val = np.array([1, 1, 1, 1, 1, 1])
     data.A = sp.csc_matrix((val, (row, col)), shape=(4, 3))
 
-    settings = qpalm.Settings()
+    settings = qpalm_rl.Settings()
     with pytest.raises(
         ValueError, match="^Solver initialization using qpalm_setup failed"
     ):
-        qpalm.Solver(data, settings)
+        qpalm_rl.Solver(data, settings)
 
 
 def test_invalid_settings():
-    data = qpalm.Data(3, 4)
+    data = qpalm_rl.Data(3, 4)
 
     row = np.array([0, 0, 1, 1])
     col = np.array([0, 1, 0, 1])
@@ -167,9 +167,9 @@ def test_invalid_settings():
     val = np.array([1, 1, 1, 1, 1, 1])
     data.A = sp.csc_matrix((val, (row, col)), shape=(4, 3))
 
-    settings = qpalm.Settings()
+    settings = qpalm_rl.Settings()
     settings.max_iter = -1
     with pytest.raises(
         ValueError, match="^Solver initialization using qpalm_setup failed"
     ):
-        qpalm.Solver(data, settings)
+        qpalm_rl.Solver(data, settings)

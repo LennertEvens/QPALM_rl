@@ -1,5 +1,5 @@
 import scipy.sparse as sp
-import qpalm
+import qpalm_rl
 
 # %% Construct the matrices describing the problem
 """
@@ -7,7 +7,7 @@ import qpalm
          x
       subject to  bmin ≤ Ax ≤ bmax
 """
-data = qpalm.Data(3, 4)
+data = qpalm_rl.Data(3, 4)
 
 # Q is sparse and symmetric
 row = [0, 0, 1, 1, 2]
@@ -28,19 +28,19 @@ data.A = sp.csc_matrix((valuesA, (row, col)), shape=(4, 3))
 
 # %% Configure the solver
 
-settings = qpalm.Settings()
+settings = qpalm_rl.Settings()
 settings.eps_abs = 1e-8
 
 # %% Solve the problem
 
-solver = qpalm.Solver(data, settings)
+solver = qpalm_rl.Solver(data, settings)
 solver.solve()
 
 # %% Print the results
 print("Status:     ", solver.info.status)
 print("Solution:   ", solver.solution.x)
 print("Multipliers:", solver.solution.y)
-assert solver.info.status_val == qpalm.Info.SOLVED
+assert solver.info.status_val == qpalm_rl.Info.SOLVED
 
 # %% Warm start with solution 
 solver.warm_start(solver.solution.x, solver.solution.y)

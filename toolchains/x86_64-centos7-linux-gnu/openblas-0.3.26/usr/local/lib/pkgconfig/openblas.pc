@@ -1,0 +1,11 @@
+libdir=/usr/local/lib
+libsuffix=
+includedir=/usr/local/include/openblas
+
+openblas_config=USE_64BITINT= NO_CBLAS= NO_LAPACK= NO_LAPACKE= DYNAMIC_ARCH=OFF DYNAMIC_OLDER=OFF NO_AFFINITY=ON USE_OPENMP= HASWELL MAX_THREADS=0 
+Name: OpenBLAS
+Description: OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version
+Version: 0.3.26
+URL: https://github.com/OpenMathLib/OpenBLAS
+Libs:  -L${libdir} -lopenblas${libsuffix} 
+Cflags: -I${includedir}

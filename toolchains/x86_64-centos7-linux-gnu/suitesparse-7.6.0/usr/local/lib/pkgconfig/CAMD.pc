@@ -1,0 +1,17 @@
+# CAMD, Copyright (c) 2007-2023, Timothy A. Davis.
+# All Rights Reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/suitesparse
+
+Name: CAMD
+URL: https://github.com/DrTimothyAldenDavis/SuiteSparse
+Description: Routines for permuting sparse matrices prior to factorization in SuiteSparse
+Version: 3.3.1
+Requires.private: SuiteSparse_config
+Libs: -L${libdir} -lcamd
+Libs.private:  -lm
+Cflags: -I${includedir}

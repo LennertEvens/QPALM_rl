@@ -1,0 +1,7 @@
+/* Generated automatically. */
+static const char configuration_arguments[] = "/home/develop/.build/x86_64-centos7-linux-gnu/src/gcc/configure --build=x86_64-build_pc-linux-gnu --host=x86_64-build_pc-linux-gnu --target=x86_64-centos7-linux-gnu --prefix=/home/develop/x-tools/x86_64-centos7-linux-gnu --exec_prefix=/home/develop/x-tools/x86_64-centos7-linux-gnu --with-sysroot=/home/develop/x-tools/x86_64-centos7-linux-gnu/x86_64-centos7-linux-gnu/sysroot --enable-languages=c,c++,fortran --with-pkgversion='crosstool-NG UNKNOWN - tttapa/toolchains' --with-bugurl=https://github.com/tttapa/toolchains --enable-__cxa_atexit --disable-libmudflap --enable-libgomp --disable-libssp --enable-libquadmath --enable-libquadmath-support --enable-libsanitizer --enable-libmpx --with-gmp=/home/develop/.build/x86_64-centos7-linux-gnu/buildtools --with-mpfr=/home/develop/.build/x86_64-centos7-linux-gnu/buildtools --with-mpc=/home/develop/.build/x86_64-centos7-linux-gnu/buildtools --with-isl=/home/develop/.build/x86_64-centos7-linux-gnu/buildtools --enable-lto --enable-threads=posix --enable-target-optspace --enable-plugin --enable-gold --disable-nls --disable-multilib --with-local-prefix=/home/develop/x-tools/x86_64-centos7-linux-gnu/x86_64-centos7-linux-gnu/sysroot --enable-long-long --enable-multiarch";
+static const char thread_model[] = "posix";
+
+static const struct {
+  const char *name, *value;
+} configure_default_options[] = { { "cpu", "generic" }, { "arch", "x86-64" } };

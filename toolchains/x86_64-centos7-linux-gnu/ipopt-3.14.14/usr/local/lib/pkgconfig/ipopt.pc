@@ -1,0 +1,15 @@
+prefix=${pcfiledir}/../../../../../ipopt-3.14.14/usr/local
+#prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/coin-or
+
+Name: Ipopt
+Description: Interior Point Optimizer
+URL: https://github.com/coin-or/Ipopt
+Version: 3.14.14
+Cflags: -I${includedir}
+#Libs: -L${libdir} -lipopt
+#Requires.private:  
+Libs: -L${libdir} -lipopt -L${pcfiledir}/../../../../../mumps-3.0.5/usr/local/lib -lcoinmumps -lgfortran -L${pcfiledir}/../../../../../openblas-0.3.26/usr/local/lib -lopenblas -pthread -lm -lm  -ldl
+Requires:  
