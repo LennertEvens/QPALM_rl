@@ -1,5 +1,0 @@
-# For more information, see
-# https://tttapa.github.io/py-build-cmake/Cross-compilation.html
-
-arch = 'manylinux_2_17_x86_64'
-toolchain_file = 'x86_64-centos7-linux-gnu.toolchain.cmake'
