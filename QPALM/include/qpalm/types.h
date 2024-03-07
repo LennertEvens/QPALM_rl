@@ -299,6 +299,15 @@ typedef struct {
   c_float *D_temp;   ///< temporary primal variable scaling vectors
   c_float *E_temp;   ///< temporary constraints scaling vectors
 
+    /** @} */
+
+  /**
+   * @name Reinforcement learning variables
+   * @{
+   */
+
+  c_int *model;
+
 
   /** @} */
   QPALMSolver   *solver;   ///< linsys variables

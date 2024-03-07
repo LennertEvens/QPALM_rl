@@ -26,6 +26,7 @@ extern "C" {
 
 #include <ladel.h>
 
+#include <qpalm/inference.h>
 /**********************
 * Main API Functions *
 **********************/
@@ -410,6 +411,8 @@ static void qpalm_initialize(QPALMWorkspace *work, solver_common **common1, solv
     {
         work->info->dual_objective = QPALM_NULL;
     }
+
+    load_model(work);
 
     #ifdef QPALM_TIMING
     work->info->setup_time += qpalm_toc(work->timer); // Start timer
