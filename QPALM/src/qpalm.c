@@ -26,7 +26,8 @@ extern "C" {
 
 #include <ladel.h>
 
-#include <qpalm/inference.h>
+#include <inference_c_connector.h>
+
 /**********************
 * Main API Functions *
 **********************/
@@ -63,6 +64,11 @@ void qpalm_set_default_settings(QPALMSettings *settings)
     settings->factorization_method      = FACTORIZATION_METHOD;               /* factorization method (kkt or schur) */
     settings->max_rank_update           = MAX_RANK_UPDATE;                    /* maximum rank of the update */
     settings->max_rank_update_fraction  = (c_float)MAX_RANK_UPDATE_FRACTION;  /* maximum rank (relative to n+m) of the update */
+    settings->use_rl                    = USE_RL;                             /* boolean, use reinforcement learning to update penalty factors */
+    settings->model_interval_l          = MODEL_INTERVAL_L;                   /* lower bound of model_interval*/
+    settings->model_interval_u          = MODEL_INTERVAL_U;                   /* upper bound of model_interval*/
+    settings->delta_interval_l          = DELTA_INTERVAL_L;                   /* lower bound of delta_interval*/
+    settings->delta_interval_u          = DELTA_INTERVAL_U;                   /* upper bound of delta_interval*/
 }
 
 
@@ -247,6 +253,13 @@ QPALMWorkspace* qpalm_setup(const QPALMData *data, const QPALMSettings *settings
     // Allocate and initialize information
     work->info                = qpalm_calloc(1, sizeof(QPALMInfo));
     update_status(work->info, QPALM_UNSOLVED);
+
+    // Reinforcement learning variables
+    if (work->settings->use_rl) {
+        work->delta_interval = qpalm_calloc(2, sizeof(c_float));
+        work->model_interval = qpalm_calloc(2, sizeof(c_float));
+        work->state =          qpalm_calloc(4, sizeof(c_float));
+    }
     # ifdef QPALM_TIMING
     work->info->solve_time  = 0.0;                    // Solve time to zero
     work->info->run_time    = 0.0;                    // Total run time to zero
@@ -412,7 +425,17 @@ static void qpalm_initialize(QPALMWorkspace *work, solver_common **common1, solv
         work->info->dual_objective = QPALM_NULL;
     }
 
-    load_model(work);
+    if (work->settings->use_rl)
+    {
+        work->model = InferenceClass_init_inference();
+        double temp_array[2] = {work->settings->model_interval_l, work->settings->model_interval_u};
+        prea_vec_copy(temp_array, work->model_interval, 2);
+        temp_array[0] = work->settings->delta_interval_l;
+        temp_array[1] = work->settings->delta_interval_u;
+        prea_vec_copy(temp_array, work->delta_interval, 2);
+    } else {
+        work->delta_rl = work->settings->delta;
+    }
 
     #ifdef QPALM_TIMING
     work->info->setup_time += qpalm_toc(work->timer); // Start timer
@@ -460,6 +483,11 @@ static void qpalm_termination(QPALMWorkspace *work, solver_common* c, solver_com
     c = ladel_workspace_free(c);
     if (work->settings->enable_dual_termination) 
         c2 = ladel_workspace_free(c2);
+
+    if (work->settings->use_rl)
+    {
+        InferenceClass_free_instance(work->model);
+    }
 
     #ifdef QPALM_PRINTING
     if (work->settings->verbose) 
@@ -821,6 +849,12 @@ void qpalm_cleanup(QPALMWorkspace *work)
         if (work->Qdelta_x) qpalm_free(work->Qdelta_x);
 
         if (work->Adelta_x) qpalm_free(work->Adelta_x);
+
+        if (work->delta_interval) qpalm_free(work->delta_interval);
+
+        if (work->model_interval) qpalm_free(work->model_interval);
+
+        if (work->state) qpalm_free(work->state);
 
         // Free Settings
         if (work->settings) qpalm_free(work->settings);

@@ -19,6 +19,10 @@
 
 #include <ladel.h>
 
+#include <inference_c_connector.h>
+#include <qpalm/inference_util.h>
+
+
 void compute_residuals(QPALMWorkspace *work, solver_common *c) {
 
     //Axys = Ax + y./sigma
@@ -71,7 +75,14 @@ void initialize_sigma(QPALMWorkspace *work, solver_common *c) {
 }
 
 void update_sigma(QPALMWorkspace* work, solver_common *c) {
-    
+
+    if (work->settings->use_rl)
+    {   
+        update_state(work);
+        work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 4);
+        work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
+    }
+
     work->nb_sigma_changed = 0;
     c_float *At_scalex = work->solver->At_scale;
     c_float pri_res_unscaled_norm = vec_norm_inf(work->pri_res, work->data->m);
@@ -80,7 +91,7 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
     size_t k;
     for (k = 0; k < work->data->m; k++) {
         if ((c_absval(work->pri_res[k]) > work->settings->theta*c_absval(work->pri_res_in[k])) && work->solver->active_constraints[k]) {
-            mult_factor = c_max(1.0, work->settings->delta * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
+            mult_factor = c_max(1.0, work->delta_rl * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
             sigma_temp = mult_factor * work->sigma[k];
             if (sigma_temp <= work->settings->sigma_max) { 
                 if (work->sigma[k] != sigma_temp) {

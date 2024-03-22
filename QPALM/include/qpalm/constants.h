@@ -100,7 +100,14 @@ extern "C" {
 
 #define RELATIVE_REFINEMENT_TOLERANCE 1e-10 /**< relative tolerance on the residual for linear systems solving */
 #define ABSOLUTE_REFINEMENT_TOLERANCE 1e-12 /**< absolute tolerance on the residual for linear systems solving */
-#define MAX_REFINEMENT_ITERATIONS     3     /**< maximum number of refinement iterations */  
+#define MAX_REFINEMENT_ITERATIONS     3     /**< maximum number of refinement iterations */ 
+
+#define USE_RL (FALSE) /**< default use of reinforcement learning for updating penalty factors */
+
+#define MODEL_INTERVAL_L -1  /**< default value of lower bound of model_interval*/
+#define MODEL_INTERVAL_U 1   /**< default value of upper bound of model_interval*/
+#define DELTA_INTERVAL_L 1e1 /**< default value of lower bound of delta_interval*/
+#define DELTA_INTERVAL_U 1e3 /**< default value of upper bound of delta_interval*/
 
 /* Options for settings->factorization_method */
 #define FACTORIZE_KKT 0 /**< factorize the kkt system */

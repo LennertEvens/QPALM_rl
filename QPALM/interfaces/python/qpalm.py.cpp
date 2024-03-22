@@ -186,7 +186,12 @@ PYBIND11_MODULE(MODULE_NAME, m) {
         .def_readwrite("ordering", &qpalm::Settings::ordering)
         .def_readwrite("factorization_method", &qpalm::Settings::factorization_method)
         .def_readwrite("max_rank_update", &qpalm::Settings::max_rank_update)
-        .def_readwrite("max_rank_update_fraction", &qpalm::Settings::max_rank_update_fraction);
+        .def_readwrite("max_rank_update_fraction", &qpalm::Settings::max_rank_update_fraction)
+        .def_readwrite("use_rl", &qpalm::Settings::use_rl)
+        .def_readwrite("model_interval_l", &qpalm::Settings::model_interval_l)
+        .def_readwrite("model_interval_u", &qpalm::Settings::model_interval_u)
+        .def_readwrite("delta_interval_l", &qpalm::Settings::delta_interval_l)
+        .def_readwrite("delta_interval_u", &qpalm::Settings::delta_interval_u);
 
     py::class_<qpalm::Solver>(m, "Solver")
         .def(py::init<const qpalm::Data &, const qpalm::Settings &>(), "data"_a, "settings"_a)

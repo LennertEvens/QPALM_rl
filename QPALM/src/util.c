@@ -56,6 +56,11 @@ QPALMSettings* copy_settings(const QPALMSettings *settings) {
     new->factorization_method     = settings->factorization_method;
     new->max_rank_update          = settings->max_rank_update;
     new->max_rank_update_fraction = settings->max_rank_update_fraction;
+    new->use_rl                   = settings->use_rl;
+    new->model_interval_l         = settings->model_interval_l;
+    new->model_interval_u         = settings->model_interval_u;
+    new->delta_interval_l         = settings->delta_interval_l;
+    new->delta_interval_u         = settings->delta_interval_u;
     return new;
 }
 

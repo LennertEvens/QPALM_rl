@@ -15,6 +15,6 @@ if not typing.TYPE_CHECKING and _is_truthy(os.getenv('QPALM_PYTHON_DEBUG')):
 else:
     from qpalm_rl._qpalm import *
     from qpalm_rl._qpalm import __version__ as c_version
-# assert __version__ == c_version
+assert __version__ == c_version
 
 del _is_truthy, typing, os

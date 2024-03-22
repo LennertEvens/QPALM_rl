@@ -330,11 +330,10 @@ static c_float lobpcg(QPALMWorkspace *work, c_float *x, solver_common *c) {
 
 void set_settings_nonconvex(QPALMWorkspace *work, solver_common *c){
     #ifdef QPALM_NONCONVEX
-    c_float lambda;
-    lambda = lobpcg(work, NULL, c);
-    if (lambda < 0) {
+    work->lambda_min = lobpcg(work, NULL, c);
+    if (work->lambda_min < 0) {
         work->settings->proximal = TRUE;
-        work->settings->gamma_init = 1/c_absval(lambda);
+        work->settings->gamma_init = 1/c_absval(work->lambda_min);
         work->gamma = work->settings->gamma_init;
         work->settings->gamma_max = work->settings->gamma_init;
         work->gamma_maxed = TRUE;

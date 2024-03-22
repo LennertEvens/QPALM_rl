@@ -13,6 +13,7 @@ extern "C" {
 # endif 
 
 #include <qpalm/global_opts.h>
+#include <inference_c_connector.h>
 
 #include <ladel.h>
 typedef ladel_work            solver_common;
@@ -145,6 +146,11 @@ typedef struct {
   c_int   factorization_method;     ///< factorize KKT or Schur complement
   c_int   max_rank_update;          ///< maximum rank for the sparse factorization update
   c_float max_rank_update_fraction; ///< maximum rank (relative to n+m) for the factorization update
+  c_int   use_rl;                   ///< boolean, use reinforcement learning to update penalty factors
+  c_float model_interval_l;         ///< lower bound of model_interval
+  c_float model_interval_u;         ///< upper bound of model_interval
+  c_float delta_interval_l;         ///< lower bound of delta_interval
+  c_float delta_interval_u;         ///< upper bound of delta_interval
 } QPALMSettings;
 
 /// @}
@@ -235,7 +241,7 @@ typedef struct {
   c_float *neg_dphi;      ///< -dphi, required as the rhs in SCHUR
   c_float *dphi_prev;     ///< previous gradient of the Lagrangian
   c_float *d;             ///< primal update step
-
+  c_float lambda_min;     ///< smallest eigenvalue of the hessian
   /** @} */
 
   /**
@@ -299,14 +305,17 @@ typedef struct {
   c_float *D_temp;   ///< temporary primal variable scaling vectors
   c_float *E_temp;   ///< temporary constraints scaling vectors
 
-    /** @} */
-
-  /**
+  /** @} */
+    /**
    * @name Reinforcement learning variables
-   * @{
+   * @{ 
    */
-
-  c_int *model;
+  inference_handle model;  ///< pytorch model for inference
+  c_float *state;           ///< state of the environment which is passed to the model
+  c_float *delta_interval; ///< interval to which the output of the model is mapped
+  c_float *model_interval; ///< interval which contains the output of the pytorch model
+  c_float unmapped_delta;  ///< output of PyTorch model with value in model_interval
+  c_float delta_rl;        ///< unmapped_delta mapped from model_interval to delta_interval
 
 
   /** @} */

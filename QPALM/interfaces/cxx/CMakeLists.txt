@@ -25,4 +25,4 @@ set_target_properties(qpalm_cxx PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 add_library(${PROJECT_NAME}::qpalm_cxx ALIAS qpalm_cxx)
 
-include(cmake/Install.cmake)
+# include(cmake/Install.cmake)

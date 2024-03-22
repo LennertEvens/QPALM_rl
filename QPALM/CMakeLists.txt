@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 project(QPALM VERSION 1.2.3)
-set(PY_VERSION_SUFFIX "")
+set(PY_VERSION_SUFFIX ".dev1")
 
 # Options
 include(CMakeDependentOption)
@@ -57,6 +57,11 @@ target_compile_definitions(qpalm-headers INTERFACE
 target_compile_features(qpalm-headers INTERFACE c_std_99)
 target_link_libraries(qpalm-headers INTERFACE LADEL::ladel)
 
+
+# Inference
+add_subdirectory(inference INTERFACE)
+target_link_libraries(qpalm-headers INTERFACE inference)
+
 add_library(qpalm-obj OBJECT
     "src/iteration.c"
     "src/lin_alg.c"
@@ -70,8 +75,10 @@ add_library(qpalm-obj OBJECT
     "src/util.c"
     "src/validate.c"
     "src/global_opts.c"
+    "src/inference_util.c"
 )
 target_link_libraries(qpalm-obj PUBLIC qpalm-headers)
+# target_link_libraries(qpalm-obj PUBLIC inference)
 target_link_libraries(qpalm-obj PRIVATE qpalm_lax_warnings)
 set_target_properties(qpalm-obj PROPERTIES C_VISIBILITY_PRESET hidden)
 target_compile_definitions(qpalm-obj
@@ -92,7 +99,8 @@ add_library(${PROJECT_NAME}::qpalm ALIAS qpalm)
 add_subdirectory(interfaces)
 
 # Installation
-include(cmake/Install.cmake)
+# include(cmake/Install.cmake)
+
 
 # Packaging
 include(InstallRequiredSystemLibraries)
