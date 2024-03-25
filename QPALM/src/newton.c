@@ -34,6 +34,7 @@ void newton_set_direction(QPALMWorkspace *work, solver_common *c) {
             qpalm_form_kkt(work);
             work->solver->LD = ladel_factor_free(work->solver->LD);
             ladel_factorize_advanced_with_diag(work->solver->kkt, d, work->solver->sym, work->settings->ordering, &work->solver->LD, work->solver->kkt_full, c);
+            work->info->nb_refactor++;
             work->solver->first_factorization = FALSE;
         } 
         else if (work->solver->reset_newton || 
@@ -42,6 +43,7 @@ void newton_set_direction(QPALMWorkspace *work, solver_common *c) {
         {
             qpalm_reform_kkt(work);
             ladel_factorize_with_prior_basis_with_diag(work->solver->kkt, d, work->solver->sym, work->solver->LD, c);
+            work->info->nb_refactor++;
         }
         else 
         {

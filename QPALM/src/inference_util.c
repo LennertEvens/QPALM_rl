@@ -24,5 +24,5 @@ void update_state(QPALMWorkspace *work) {
     }
 
     work->state[2] = work->lambda_min;
-    work->state[3] = log10(work->settings->delta);
+    work->state[3] = log10(work->delta_rl);
 }

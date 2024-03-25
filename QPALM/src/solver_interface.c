@@ -260,6 +260,7 @@ void ldlchol(solver_sparse *M, QPALMWorkspace *work, solver_common *c) {
 
     /* TODO: consider SCHUR method also with ordering */
     ladel_factorize_advanced_with_diag(M, d, work->solver->sym, NO_ORDERING, &work->solver->LD, QAtA, c);
+    work->info->nb_refactor++;
     
     ladel_sparse_free(AtA);
     ladel_sparse_free(QAtA);
@@ -268,6 +269,7 @@ void ldlchol(solver_sparse *M, QPALMWorkspace *work, solver_common *c) {
   else
   {
     ladel_factorize_with_prior_basis_with_diag(M, d, work->solver->sym, work->solver->LD, c);
+    work->info->nb_refactor++;
   }
 }
 
@@ -300,6 +302,7 @@ void ldlupdate_entering_constraints(QPALMWorkspace *work, solver_common *c) {
   {
     ladel_rank1_update(work->solver->LD, work->solver->sym, work->solver->At_sqrt_sigma, 
                         work->solver->enter[index], 1.0, UPDATE, c);
+    work->info->nb_rank1_update++;
   }
 }
 
@@ -309,6 +312,7 @@ void ldldowndate_leaving_constraints(QPALMWorkspace *work, solver_common *c) {
   {
     ladel_rank1_update(work->solver->LD, work->solver->sym, work->solver->At_sqrt_sigma, 
                         work->solver->leave[index], 1.0, DOWNDATE, c);
+    work->info->nb_rank1_update++;
   }
 }
 
@@ -342,6 +346,7 @@ void ldlupdate_sigma_changed(QPALMWorkspace *work, solver_common *c) {
       factor = work->sigma_inv[row]*(At_scalex[row] - 1.0);
       // ladel_print("Factor: %f\n", factor);
       ladel_rank1_update(work->solver->LD, work->solver->sym, W, 0, factor, UPDATE, c);
+      work->info->nb_rank1_update++;
     }
     ladel_sparse_free(W);
     work->solver->reset_newton = TRUE;
@@ -351,6 +356,7 @@ void ldlupdate_sigma_changed(QPALMWorkspace *work, solver_common *c) {
     {
       ladel_rank1_update(work->solver->LD, work->solver->sym, work->solver->At_sqrt_sigma, 
                           sigma_changed[k], At_scalex[sigma_changed[k]], UPDATE, c);
+      work->info->nb_rank1_update++;
     }
   }
   

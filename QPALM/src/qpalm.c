@@ -433,9 +433,9 @@ static void qpalm_initialize(QPALMWorkspace *work, solver_common **common1, solv
         temp_array[0] = work->settings->delta_interval_l;
         temp_array[1] = work->settings->delta_interval_u;
         prea_vec_copy(temp_array, work->delta_interval, 2);
-    } else {
-        work->delta_rl = work->settings->delta;
-    }
+    } 
+    work->delta_rl = work->settings->delta;
+    
 
     #ifdef QPALM_TIMING
     work->info->setup_time += qpalm_toc(work->timer); // Start timer

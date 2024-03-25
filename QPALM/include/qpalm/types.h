@@ -85,6 +85,10 @@ typedef struct {
   c_float objective;      ///< objective function value
   c_float dual_objective; ///< dual objective function value (= NaN if enable_dual_termination is false)
 
+  c_int nb_rank1_update;
+  c_int nb_refactor;
+
+
   #ifdef QPALM_TIMING
   c_float setup_time;    ///< time taken for setup phase (seconds)
   c_float solve_time;    ///< time taken for solve phase (seconds)
