@@ -155,6 +155,7 @@ typedef struct {
   c_float model_interval_u;         ///< upper bound of model_interval
   c_float delta_interval_l;         ///< lower bound of delta_interval
   c_float delta_interval_u;         ///< upper bound of delta_interval
+  c_int   scalar_rl;
 } QPALMSettings;
 
 /// @}
@@ -320,6 +321,7 @@ typedef struct {
   c_float *model_interval; ///< interval which contains the output of the pytorch model
   c_float unmapped_delta;  ///< output of PyTorch model with value in model_interval
   c_float delta_rl;        ///< unmapped_delta mapped from model_interval to delta_interval
+  c_int state_index;
 
 
   /** @} */

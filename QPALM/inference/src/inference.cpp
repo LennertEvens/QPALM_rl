@@ -10,7 +10,8 @@
 InferenceClass::InferenceClass(){
     try {
         // Deserialize the ScriptModule from a file using torch::jit::load().
-        module = torch::jit::load("/volume1/scratch/rwang/pieter/lennert-evens/thesis_evenslennert/RLQPALM/models/model1/td3_traced.pt");
+        // module = torch::jit::load("/volume1/scratch/ppas/others/lennert/thesis_evenslennert/RLQPALM/td3_traced_256.pt");
+        module = torch::jit::load("/volume1/scratch/ppas/others/lennert/rlqp_train/tmp/test.pt");
         
         module.to(device_string);
     }
@@ -23,7 +24,7 @@ double InferenceClass::do_inference(const double* state, size_t state_size){
     
     std::vector<torch::jit::IValue> inputs;
     std::vector<double> state_copy(state, state+state_size);
-    inputs.push_back(torch::from_blob(state_copy.data(), {1, state_copy.size()}, torch::kFloat64).to(device_string));
+    inputs.push_back(torch::from_blob(state_copy.data(), {1, state_copy.size()}, torch::kFloat32).to(device_string));
 
     // Execute the model and turn its output into a tensor.
     at::Tensor output = module.forward(inputs).toTensor();

@@ -107,7 +107,8 @@ extern "C" {
 #define MODEL_INTERVAL_L -1  /**< default value of lower bound of model_interval*/
 #define MODEL_INTERVAL_U 1   /**< default value of upper bound of model_interval*/
 #define DELTA_INTERVAL_L 1e1 /**< default value of lower bound of delta_interval*/
-#define DELTA_INTERVAL_U 1e4 /**< default value of upper bound of delta_interval*/
+#define DELTA_INTERVAL_U 1e3 /**< default value of upper bound of delta_interval*/
+#define SCALAR_RL (TRUE)
 
 /* Options for settings->factorization_method */
 #define FACTORIZE_KKT 0 /**< factorize the kkt system */

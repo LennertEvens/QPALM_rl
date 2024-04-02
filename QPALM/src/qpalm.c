@@ -69,6 +69,7 @@ void qpalm_set_default_settings(QPALMSettings *settings)
     settings->model_interval_u          = MODEL_INTERVAL_U;                   /* upper bound of model_interval*/
     settings->delta_interval_l          = DELTA_INTERVAL_L;                   /* lower bound of delta_interval*/
     settings->delta_interval_u          = DELTA_INTERVAL_U;                   /* upper bound of delta_interval*/
+    settings->scalar_rl                 = SCALAR_RL;
 }
 
 
@@ -258,7 +259,11 @@ QPALMWorkspace* qpalm_setup(const QPALMData *data, const QPALMSettings *settings
     if (work->settings->use_rl) {
         work->delta_interval = qpalm_calloc(2, sizeof(c_float));
         work->model_interval = qpalm_calloc(2, sizeof(c_float));
-        work->state =          qpalm_calloc(4, sizeof(c_float));
+        if (work->settings->scalar_rl){
+            work->state      = qpalm_calloc(4, sizeof(c_float));
+        } else {
+            work->state      = qpalm_calloc(6, sizeof(c_float));
+        }
     }
     # ifdef QPALM_TIMING
     work->info->solve_time  = 0.0;                    // Solve time to zero
@@ -426,7 +431,7 @@ static void qpalm_initialize(QPALMWorkspace *work, solver_common **common1, solv
     }
 
     if (work->settings->use_rl)
-    {
+    {     
         work->model = InferenceClass_init_inference();
         double temp_array[2] = {work->settings->model_interval_l, work->settings->model_interval_u};
         prea_vec_copy(temp_array, work->model_interval, 2);

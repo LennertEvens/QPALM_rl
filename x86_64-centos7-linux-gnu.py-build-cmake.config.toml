@@ -2,5 +2,5 @@
 generator = "Ninja Multi-Config"
 config = ["Release","Debug"]
 [cmake.options]
-CMAKE_FIND_ROOT_PATH = "/volume1/scratch/rwang/pieter/lennert-evens/QPALM_rl/toolchains/x86_64-centos7-linux-gnu/pybind11-master;/volume1/scratch/rwang/pieter/lennert-evens/QPALM_rl/toolchains/x86_64-centos7-linux-gnu/eigen-master"
+CMAKE_FIND_ROOT_PATH = "/volume1/scratch/ppas/others/lennert/QPALM_rl/toolchains/x86_64-centos7-linux-gnu/pybind11-master;/volume1/scratch/ppas/pieter/lennert/QPALM_rl/toolchains/x86_64-centos7-linux-gnu/eigen-master"
 USE_GLOBAL_PYBIND11 = "On"

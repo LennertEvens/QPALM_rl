@@ -76,8 +76,9 @@ void initialize_sigma(QPALMWorkspace *work, solver_common *c) {
 
 void update_sigma(QPALMWorkspace* work, solver_common *c) {
 
-    if (work->settings->use_rl)
+    if ((work->settings->use_rl) && (work->settings->scalar_rl))
     {   
+        qpalm_print("%i\n", work->settings->scalar_rl);
         update_state(work);
         work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 4);
         work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
@@ -91,6 +92,12 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
     size_t k;
     for (k = 0; k < work->data->m; k++) {
         if ((c_absval(work->pri_res[k]) > work->settings->theta*c_absval(work->pri_res_in[k])) && work->solver->active_constraints[k]) {
+            if ((work->settings->use_rl) && (!work->settings->scalar_rl)){
+                work->state_index = k;
+                update_state(work);
+                work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 6);
+                work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
+            }
             mult_factor = c_max(1.0, work->delta_rl * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
             sigma_temp = mult_factor * work->sigma[k];
             if (sigma_temp <= work->settings->sigma_max) { 
@@ -229,7 +236,7 @@ void update_proximal_point_and_penalty(QPALMWorkspace *work, solver_common *c, c
              * The infinity norm of that vector is then equal to the maximum of both norms. */
             vec_ew_prod(work->scaling->Einv, work->Ax, work->temp_2m, m);
             vec_ew_prod(work->scaling->Einv, work->z, work->temp_2m + m, m);
-            eps_k =  (*eps_k_abs) + (*eps_k_rel)*vec_norm_inf(work->temp_2m, m);                  
+            eps_k =  (*eps_k_abs) + (*eps_k_rel)*vec_norm_inf(work->temp_2m, 2*m);                  
         } 
         else 
         {
@@ -270,7 +277,7 @@ void update_dual_iterate_and_parameters(QPALMWorkspace *work, solver_common *c, 
     prea_vec_copy(work->Atyh, work->Aty, n);
 
     work->eps_abs_in = c_max(work->settings->eps_abs, work->settings->rho*work->eps_abs_in);
-    work->eps_rel_in = c_max(work->settings->eps_rel, work->settings->rho*work->eps_rel_in); 
+    work->eps_rel_in = c_max(work->settings->eps_rel, work->settings->rho*work->eps_rel_in);
 
     update_proximal_point_and_penalty(work, c, iter_out, eps_k_abs, eps_k_rel);
 

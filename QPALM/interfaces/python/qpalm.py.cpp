@@ -193,7 +193,8 @@ PYBIND11_MODULE(MODULE_NAME, m) {
         .def_readwrite("model_interval_l", &qpalm::Settings::model_interval_l)
         .def_readwrite("model_interval_u", &qpalm::Settings::model_interval_u)
         .def_readwrite("delta_interval_l", &qpalm::Settings::delta_interval_l)
-        .def_readwrite("delta_interval_u", &qpalm::Settings::delta_interval_u);
+        .def_readwrite("delta_interval_u", &qpalm::Settings::delta_interval_u)
+        .def_readwrite("scalar_rl", &qpalm::Settings::scalar_rl);
 
     py::class_<qpalm::Solver>(m, "Solver")
         .def(py::init<const qpalm::Data &, const qpalm::Settings &>(), "data"_a, "settings"_a)

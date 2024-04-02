@@ -4,7 +4,7 @@ project(inference)
 set(CMAKE_CUDA_ARCHITECTURES "native")
 set(CMAKE_CUDA_COMPILER "/usr/local/cuda/bin/nvcc")
 
-list(APPEND CMAKE_PREFIX_PATH "/volume1/scratch/rwang/pieter/lennert-evens/libtorch/")
+list(APPEND CMAKE_PREFIX_PATH "/volume1/scratch/ppas/others/lennert/libtorch/")
 
 find_package(Torch REQUIRED)
 

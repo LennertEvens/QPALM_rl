@@ -61,6 +61,7 @@ QPALMSettings* copy_settings(const QPALMSettings *settings) {
     new->model_interval_u         = settings->model_interval_u;
     new->delta_interval_l         = settings->delta_interval_l;
     new->delta_interval_u         = settings->delta_interval_u;
+    new->scalar_rl                = settings->scalar_rl;
     return new;
 }
 
