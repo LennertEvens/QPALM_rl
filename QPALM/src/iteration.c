@@ -95,10 +95,11 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
                 work->state_index = k;
                 update_state(work);
                 work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 6);
-                work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
+                sigma_temp = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
+            } else {
+                mult_factor = c_max(1.0, work->delta_rl * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
+                sigma_temp = mult_factor * work->sigma[k];
             }
-            mult_factor = c_max(1.0, work->delta_rl * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
-            sigma_temp = mult_factor * work->sigma[k];
             if (sigma_temp <= work->settings->sigma_max) { 
                 if (work->sigma[k] != sigma_temp) {
                     sigma_changed[work->nb_sigma_changed] = (c_int)k;
