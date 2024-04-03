@@ -35,11 +35,32 @@ void update_state(QPALMWorkspace *work) {
         // work->state[2] = work->z[work->state_index] - work->pri_res[work->state_index];
         // work->state[3] = log10(work->sigma[work->state_index]);
         work->state[0] = work->pri_res[work->state_index];
-        work->state[1] = work->y[work->state_index];
-        work->state[2] = work->z[work->state_index];
-        work->state[3] = work->data->bmin[work->state_index];
-        work->state[4] = work->data->bmax[work->state_index];
-        work->state[5] = work->sigma[work->state_index];
+        work->state[1] = work->z[work->state_index];
+        work->state[2] = work->y[work->state_index];
+        if (work->sigma[work->state_index] < 1e-15)
+        {   
+            work->state[3] = -15;
+            
+        } else {
+            work->state[3] = log10(work->sigma[work->state_index]);
+        }
+
+        if (work->info->pri_res_norm < 1e-15)
+        {   
+            work->state[4] = -15;
+            
+        } else {
+            work->state[4] = log10(work->info->pri_res_norm);
+        }
+
+        if (work->info->dua_res_norm < 1e-15)
+        {
+            
+            work->state[5] = -15;
+        } else {
+            work->state[5] = log10(work->info->dua_res_norm);
+        }
+        
 
     }
 }

@@ -78,9 +78,8 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
 
     if ((work->settings->use_rl) && (work->settings->scalar_rl))
     {   
-        qpalm_print("%i\n", work->settings->scalar_rl);
         update_state(work);
-        work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 4);
+        work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 7);
         work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
     }
 
