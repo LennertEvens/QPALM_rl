@@ -75,7 +75,7 @@ install_components = ["python_modules", "python_stubs"]
 "CMAKE_INSTALL_RPATH_USE_LINK_PATH" = "On"
 
 [tool.py-build-cmake.linux.cmake]
-config = ["Debug", "Release"]
+config = ["Debug", "RelWithDebInfo"]
 generator = "Ninja Multi-Config"
 [tool.py-build-cmake.mac.cmake]
 config = ["Debug", "Release"]
