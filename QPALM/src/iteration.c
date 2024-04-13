@@ -21,6 +21,7 @@
 
 #include <inference_c_connector.h>
 #include <qpalm/inference_util.h>
+#include "math.h"
 
 
 void compute_residuals(QPALMWorkspace *work, solver_common *c) {
@@ -81,7 +82,7 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
     {   
         update_state(work);
         work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 5);
-        sigma_temp = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
+        work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
     }
 
     work->nb_sigma_changed = 0;
@@ -92,25 +93,28 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
     size_t k;
     for (k = 0; k < work->data->m; k++) {
         if ((c_absval(work->pri_res[k]) > work->settings->theta*c_absval(work->pri_res_in[k])) && work->solver->active_constraints[k]) {
-            
             // if ((work->settings->use_rl) && (!work->settings->scalar_rl)){
             //     work->state_index = k;
             //     update_state(work);
-            //     work->unmapped_delta= InferenceClass_do_inference(work->model, work->state, 6);
-            //     sigma_temp = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
-            //     mult_factor = c_max(1.0, work->delta_rl * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
+            //     work->unmapped_delta= InferenceClass_do_inference(work->model, work->state, 5);
+            //     // sigma_temp = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
+            //     sigma_temp = work->unmapped_delta;
                 
+            //     // if (isnan(sigma_temp)){
+            //     //     sigma_temp = work->sigma[k];
+            //     // }
+            //     mult_factor = sigma_temp/work->sigma[k];
             // } else {
-            //     mult_factor = c_max(1.0, work->delta_rl * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
+            //     mult_factor = c_max(1.0, work->settings->delta * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
             //     sigma_temp = mult_factor * work->sigma[k];
             // }
-
-            if (!work->settings->use_rl){
-                mult_factor = c_max(1.0, work->delta_rl * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
-                sigma_temp = mult_factor * work->sigma[k];
-            } else {
+            if ((work->settings->use_rl) && (work->settings->scalar_rl))
+            {   
+                sigma_temp = work->delta_rl;
                 mult_factor = sigma_temp/work->sigma[k];
-            }
+            } else {
+                mult_factor = c_max(1.0, work->settings->delta * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
+                sigma_temp = mult_factor * work->sigma[k];
             
             if (sigma_temp <= work->settings->sigma_max) { 
                 if (work->sigma[k] != sigma_temp) {

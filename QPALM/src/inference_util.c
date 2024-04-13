@@ -26,7 +26,13 @@ void update_state(QPALMWorkspace *work) {
             work->state[1] = log10(work->info->dua_res_norm);
         }
 
-        work->state[2] = log10(work->sigma[0]);
+        if (work->sigma[0] < 1e-15)
+        {
+            
+            work->state[2] = -15;
+        } else {
+            work->state[2] = log10(work->sigma[0]);
+        }
         work->state[3] = work->solver->nb_enter;
         work->state[4] = work->solver->nb_leave;
 
