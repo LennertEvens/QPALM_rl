@@ -26,8 +26,9 @@ void update_state(QPALMWorkspace *work) {
             work->state[1] = log10(work->info->dua_res_norm);
         }
 
-        work->state[2] = work->lambda_min;
-        work->state[3] = log10(work->delta_rl);
+        work->state[2] = log10(work->sigma[0]);
+        work->state[3] = work->solver->nb_enter;
+        work->state[4] = work->solver->nb_leave;
 
     } else {
         // work->state[0] = log10(MIN(work->z[work->state_index] - work->data->bmin[work->state_index], work->data->bmax[work->state_index] - work->z[work->state_index]));

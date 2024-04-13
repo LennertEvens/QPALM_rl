@@ -260,7 +260,7 @@ QPALMWorkspace* qpalm_setup(const QPALMData *data, const QPALMSettings *settings
         work->delta_interval = qpalm_calloc(2, sizeof(c_float));
         work->model_interval = qpalm_calloc(2, sizeof(c_float));
         if (work->settings->scalar_rl){
-            work->state      = qpalm_calloc(4, sizeof(c_float));
+            work->state      = qpalm_calloc(5, sizeof(c_float));
         } else {
             work->state      = qpalm_calloc(6, sizeof(c_float));
         }
