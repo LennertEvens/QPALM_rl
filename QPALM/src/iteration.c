@@ -110,6 +110,7 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
             if ((work->settings->use_rl) && (work->settings->scalar_rl))
             {   
                 sigma_temp = work->delta_rl;
+                qpalm_print("%f\n", sigma_temp);
                 mult_factor = sigma_temp/work->sigma[k];
             } else {
                 mult_factor = c_max(1.0, work->settings->delta * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
