@@ -28,6 +28,10 @@ extern "C" {
 
 #include <inference_c_connector.h>
 
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define CLAMP(x,a,b) (MIN(MAX(x,a),b))
+
 /**********************
 * Main API Functions *
 **********************/
@@ -260,7 +264,7 @@ QPALMWorkspace* qpalm_setup(const QPALMData *data, const QPALMSettings *settings
         work->delta_interval = qpalm_calloc(2, sizeof(c_float));
         work->model_interval = qpalm_calloc(2, sizeof(c_float));
         if (work->settings->scalar_rl){
-            work->state      = qpalm_calloc(5, sizeof(c_float));
+            work->state      = qpalm_calloc(8, sizeof(c_float));
         } else {
             work->state      = qpalm_calloc(6, sizeof(c_float));
         }
@@ -532,6 +536,7 @@ void qpalm_solve(QPALMWorkspace *work)
     c_float eps_k_abs = work->settings->eps_abs_in; 
     c_float eps_k_rel = work->settings->eps_rel_in; 
     c_int no_change_in_active_constraints = 0;
+    work->prev_iter = 0;
 
     for (iter = 0; iter < work->settings->max_iter; iter++) 
     {
@@ -548,7 +553,13 @@ void qpalm_solve(QPALMWorkspace *work)
         /*Perform the iteration */
         compute_residuals(work, c);
         calculate_residual_norms_and_tolerances(work);
-        
+        work->curr_iter = iter;
+        if ((iter == 0) && work->settings->use_rl)
+        {
+            work->state[1] = log10(CLAMP(work->info->pri_res_norm, 1e-15, 1e8));
+            work->state[3] = log10(CLAMP(work->info->dua_res_norm, 1e-15, 1e8));
+        }
+
         if (is_solved(work)) 
         {
             qpalm_terminate_on_status(work, c, c2, iter, iter_out, QPALM_SOLVED);
@@ -567,6 +578,7 @@ void qpalm_solve(QPALMWorkspace *work)
         else if (check_subproblem_termination(work) || (no_change_in_active_constraints == 3)) 
         {
             update_dual_iterate_and_parameters(work, c, iter_out, &eps_k_abs, &eps_k_rel);
+            work->prev_iter = iter;
         
             if(work->settings->enable_dual_termination) 
             {
@@ -594,6 +606,7 @@ void qpalm_solve(QPALMWorkspace *work)
             if (iter_out > 0 && work->info->pri_res_norm > work->eps_pri) 
             {
                 update_sigma(work, c);
+                work->prev_iter = iter;
             } 
 
             if(work->settings->proximal) 

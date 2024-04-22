@@ -81,8 +81,9 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
     if ((work->settings->use_rl) && (work->settings->scalar_rl))
     {   
         update_state(work);
-        work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 5);
+        work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 8);
         work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
+        qpalm_print("%f\n",work->delta_rl);
     }
 
     work->nb_sigma_changed = 0;
@@ -91,53 +92,49 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
     
     c_int *sigma_changed = work->solver->enter;
     size_t k;
-    for (k = 0; k < work->data->m; k++) {
-        if ((c_absval(work->pri_res[k]) > work->settings->theta*c_absval(work->pri_res_in[k])) && work->solver->active_constraints[k]) {
-            // if ((work->settings->use_rl) && (!work->settings->scalar_rl)){
-            //     work->state_index = k;
-            //     update_state(work);
-            //     work->unmapped_delta= InferenceClass_do_inference(work->model, work->state, 5);
-            //     // sigma_temp = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
-            //     sigma_temp = work->unmapped_delta;
-                
-            //     // if (isnan(sigma_temp)){
-            //     //     sigma_temp = work->sigma[k];
-            //     // }
-            //     mult_factor = sigma_temp/work->sigma[k];
-            // } else {
-            //     mult_factor = c_max(1.0, work->settings->delta * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
-            //     sigma_temp = mult_factor * work->sigma[k];
-            // }
-            if ((work->settings->use_rl) && (work->settings->scalar_rl))
-            {   
-                sigma_temp = work->delta_rl;
-                mult_factor = sigma_temp/work->sigma[k];
-            } else {
+    if (work->settings->use_rl)
+    {
+        sigma_temp = work->delta_rl;
+        for (k = 0; k < work->data->m; k++) {
+            mult_factor = sigma_temp/work->sigma[k];
+            if (work->sigma[k] != sigma_temp) {
+                sigma_changed[work->nb_sigma_changed] = (c_int)k;
+                work->nb_sigma_changed++;
+            }               
+            work->sigma[k] = sigma_temp;
+            work->sigma_inv[k] = 1.0/sigma_temp;
+            mult_factor = c_sqrt(mult_factor);
+            work->sqrt_sigma[k] = mult_factor * work->sqrt_sigma[k];
+            At_scalex[k] = mult_factor;
+        }
+    } else {
+        for (k = 0; k < work->data->m; k++) {
+            if ((c_absval(work->pri_res[k]) > work->settings->theta*c_absval(work->pri_res_in[k])) && work->solver->active_constraints[k]) {
                 mult_factor = c_max(1.0, work->settings->delta * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
                 sigma_temp = mult_factor * work->sigma[k];
-            
-            if (sigma_temp <= work->settings->sigma_max) { 
-                if (work->sigma[k] != sigma_temp) {
-                    sigma_changed[work->nb_sigma_changed] = (c_int)k;
-                    work->nb_sigma_changed++;
-                }               
-                work->sigma[k] = sigma_temp;
-                work->sigma_inv[k] = 1.0/sigma_temp;
-                mult_factor = c_sqrt(mult_factor);
-                work->sqrt_sigma[k] = mult_factor * work->sqrt_sigma[k];
-                At_scalex[k] = mult_factor;
+                if (sigma_temp <= work->settings->sigma_max) { 
+                    if (work->sigma[k] != sigma_temp) {
+                        sigma_changed[work->nb_sigma_changed] = (c_int)k;
+                        work->nb_sigma_changed++;
+                    }               
+                    work->sigma[k] = sigma_temp;
+                    work->sigma_inv[k] = 1.0/sigma_temp;
+                    mult_factor = c_sqrt(mult_factor);
+                    work->sqrt_sigma[k] = mult_factor * work->sqrt_sigma[k];
+                    At_scalex[k] = mult_factor;
+                } else {
+                    if (work->sigma[k] != work->settings->sigma_max) {
+                        sigma_changed[work->nb_sigma_changed] = (c_int)k;
+                        work->nb_sigma_changed++;
+                    } 
+                    work->sigma[k] = work->settings->sigma_max;
+                    work->sigma_inv[k] = 1.0/work->settings->sigma_max;
+                    At_scalex[k] = work->sqrt_sigma_max / work->sqrt_sigma[k];
+                    work->sqrt_sigma[k] = work->sqrt_sigma_max;
+                }
             } else {
-                if (work->sigma[k] != work->settings->sigma_max) {
-                    sigma_changed[work->nb_sigma_changed] = (c_int)k;
-                    work->nb_sigma_changed++;
-                } 
-                work->sigma[k] = work->settings->sigma_max;
-                work->sigma_inv[k] = 1.0/work->settings->sigma_max;
-                At_scalex[k] = work->sqrt_sigma_max / work->sqrt_sigma[k];
-                work->sqrt_sigma[k] = work->sqrt_sigma_max;
+                At_scalex[k] = 1.0;
             }
-        } else {
-            At_scalex[k] = 1.0;
         }
     }
 

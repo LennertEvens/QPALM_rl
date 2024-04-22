@@ -247,6 +247,8 @@ typedef struct {
   c_float *dphi_prev;     ///< previous gradient of the Lagrangian
   c_float *d;             ///< primal update step
   c_float lambda_min;     ///< smallest eigenvalue of the hessian
+  c_int   prev_iter;
+  c_int   curr_iter;
   /** @} */
 
   /**
