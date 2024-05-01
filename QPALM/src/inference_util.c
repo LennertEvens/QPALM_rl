@@ -3,6 +3,8 @@
 #include <math.h>
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define CLAMP(x,a,b) (MIN(MAX(x,a),b))
 
 c_float interval_map(const double val, const c_float *interval1, const c_float *interval2) {
     return interval2[0] + (interval2[1]-interval2[0])*(val - interval1[0])/(interval1[1]-interval1[0]);
@@ -10,63 +12,24 @@ c_float interval_map(const double val, const c_float *interval1, const c_float *
 
 void update_state(QPALMWorkspace *work) {
     if (work->settings->scalar_rl){
-        if (work->info->pri_res_norm < 1e-15)
-        {   
-            work->state[0] = -15;
-            
-        } else {
-            work->state[0] = log10(work->info->pri_res_norm);
-        }
+        work->state[0] = work->state[1];
+        work->state[1] = log10(CLAMP(work->info->pri_res_norm, 1e-15, 1e8));
+        work->state[2] = work->state[3];
+        work->state[3] = log10(CLAMP(work->info->dua_res_norm, 1e-15, 1e8));
+        work->state[4] = log10(work->delta_rl);
+        work->state[5] = work->solver->nb_enter;
+        work->state[6] = work->solver->nb_leave;
+        work->state[7] = work->curr_iter - work->prev_iter;
 
-        if (work->info->dua_res_norm < 1e-15)
-        {
-            
-            work->state[1] = -15;
-        } else {
-            work->state[1] = log10(work->info->dua_res_norm);
-        }
-
-        if (work->sigma[0] < 1e-15)
-        {
-            
-            work->state[2] = -15;
-        } else {
-            work->state[2] = log10(work->sigma[0]);
-        }
-        work->state[3] = work->solver->nb_enter;
-        work->state[4] = work->solver->nb_leave;
 
     } else {
-        // work->state[0] = log10(MIN(work->z[work->state_index] - work->data->bmin[work->state_index], work->data->bmax[work->state_index] - work->z[work->state_index]));
-        // work->state[1] = work->y[work->state_index];
-        // work->state[2] = work->z[work->state_index] - work->pri_res[work->state_index];
-        // work->state[3] = log10(work->sigma[work->state_index]);
-        work->state[0] = work->pri_res[work->state_index];
-        work->state[1] = work->z[work->state_index];
-        work->state[2] = work->y[work->state_index];
-        if (work->sigma[work->state_index] < 1e-15)
-        {   
-            work->state[3] = -15;
-            
-        } else {
-            work->state[3] = log10(work->sigma[work->state_index]);
-        }
+        work->state[0] = CLAMP(work->pri_res[work->state_index], -1e8, 1e8);
+        work->state[1] = work->y[work->state_index];
+        work->state[2] = CLAMP(work->z[work->state_index], -1e8, 1e8);
+        work->state[3] = log10(CLAMP(work->sigma[work->state_index], 1e-15, 1e8));
+        work->state[4] = log10(CLAMP(work->info->pri_res_norm, 1e-15, 1e8));
+        work->state[5] = log10(CLAMP(work->info->dua_res_norm, 1e-15, 1e8));
 
-        if (work->info->pri_res_norm < 1e-15)
-        {   
-            work->state[4] = -15;
-            
-        } else {
-            work->state[4] = log10(work->info->pri_res_norm);
-        }
-
-        if (work->info->dua_res_norm < 1e-15)
-        {
-            
-            work->state[5] = -15;
-        } else {
-            work->state[5] = log10(work->info->dua_res_norm);
-        }
         
 
     }
