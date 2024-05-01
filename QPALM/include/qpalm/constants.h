@@ -106,7 +106,7 @@ extern "C" {
 
 #define MODEL_INTERVAL_L -1  /**< default value of lower bound of model_interval*/
 #define MODEL_INTERVAL_U 1   /**< default value of upper bound of model_interval*/
-#define DELTA_INTERVAL_L 1e-6 /**< default value of lower bound of delta_interval*/
+#define DELTA_INTERVAL_L 1e-2 /**< default value of lower bound of delta_interval*/
 #define DELTA_INTERVAL_U 1e6 /**< default value of upper bound of delta_interval*/
 #define SCALAR_RL (TRUE)
 
