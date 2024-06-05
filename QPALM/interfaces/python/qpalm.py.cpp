@@ -136,6 +136,8 @@ PYBIND11_MODULE(MODULE_NAME, m) {
         .def_readwrite("setup_time", &qpalm::Info::setup_time)
         .def_readwrite("solve_time", &qpalm::Info::solve_time)
         .def_readwrite("run_time", &qpalm::Info::run_time)
+        .def_readwrite("inference_time", &qpalm::Info::inference_time)
+        .def_readwrite("model_load_time", &qpalm::Info::model_load_time)
 #endif
         .def_property(
             "status", [](const qpalm::Info &i) -> std::string_view { return i.status; },

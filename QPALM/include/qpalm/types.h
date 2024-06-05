@@ -93,6 +93,8 @@ typedef struct {
   c_float setup_time;    ///< time taken for setup phase (seconds)
   c_float solve_time;    ///< time taken for solve phase (seconds)
   c_float run_time;      ///< total time (seconds)
+  c_float inference_time;
+  c_float model_load_time;
   #endif
 
 } QPALMInfo;
@@ -335,6 +337,7 @@ typedef struct {
 
   # ifdef QPALM_TIMING
   QPALMTimer *timer;       ///< timer object
+  QPALMTimer *timer2;
   # endif // ifdef QPALM_TIMING
 
 } QPALMWorkspace;

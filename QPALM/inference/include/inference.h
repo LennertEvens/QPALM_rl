@@ -15,7 +15,7 @@ class InferenceClass{
 
     private:
         torch::jit::script::Module module;
-        const std::string device_string = "cuda:0";
+        const std::string device_string = "cpu";
 
     
 };

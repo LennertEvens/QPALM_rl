@@ -81,7 +81,13 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
     if ((work->settings->use_rl) && (work->settings->scalar_rl))
     {   
         update_state(work);
+        #ifdef QPALM_TIMING
+        qpalm_tic(work->timer2);
+        #endif
         work->unmapped_delta = InferenceClass_do_inference(work->model, work->state, 8);
+        #ifdef QPALM_TIMING
+        work->info->inference_time += qpalm_toc(work->timer2);
+        #endif
         work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
         qpalm_print("%f\n",work->delta_rl);
     }
@@ -133,7 +139,6 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
             if ((c_absval(work->pri_res[k]) > work->settings->theta*c_absval(work->pri_res_in[k])) && work->solver->active_constraints[k]) {
                 mult_factor = c_max(1.0, work->settings->delta * c_absval(work->pri_res[k]) / (pri_res_unscaled_norm + 1e-6));
                 sigma_temp = mult_factor * work->sigma[k];
-                qpalm_print("%f\n", sigma_temp);
                 if (sigma_temp <= work->settings->sigma_max) { 
                     if (work->sigma[k] != sigma_temp) {
                         sigma_changed[work->nb_sigma_changed] = (c_int)k;

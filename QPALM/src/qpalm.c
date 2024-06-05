@@ -113,6 +113,7 @@ QPALMWorkspace* qpalm_setup(const QPALMData *data, const QPALMSettings *settings
     // Start and allocate directly timer
     # ifdef QPALM_TIMING
     work->timer = qpalm_malloc(sizeof(QPALMTimer));
+    work->timer2 = qpalm_malloc(sizeof(QPALMTimer));
     qpalm_tic(work->timer);
     # endif /* ifdef QPALM_TIMING */
 
@@ -331,6 +332,8 @@ static void qpalm_initialize(QPALMWorkspace *work, solver_common **common1, solv
     {
         #ifdef QPALM_TIMING
         work->info->setup_time = 0;
+        work->info->inference_time = 0;
+        work->info->model_load_time = 0;
         #endif /* ifdef QPALM_TIMING */
         work->info->status_val = QPALM_UNSOLVED;
     }
@@ -435,13 +438,19 @@ static void qpalm_initialize(QPALMWorkspace *work, solver_common **common1, solv
     }
 
     if (work->settings->use_rl)
-    {     
+    {    
+        #ifdef QPALM_TIMING
+        qpalm_tic(work->timer2);
+        #endif
         work->model = InferenceClass_init_inference();
         double temp_array[2] = {work->settings->model_interval_l, work->settings->model_interval_u};
         prea_vec_copy(temp_array, work->model_interval, 2);
         temp_array[0] = work->settings->delta_interval_l;
         temp_array[1] = work->settings->delta_interval_u;
         prea_vec_copy(temp_array, work->delta_interval, 2);
+        #ifdef QPALM_TIMING
+        work->info->model_load_time += qpalm_toc(work->timer2);
+        #endif
     } 
     work->delta_rl = work->settings->delta;
     
@@ -947,6 +956,7 @@ void qpalm_cleanup(QPALMWorkspace *work)
         // Free timer
         # ifdef QPALM_TIMING
         if (work->timer) qpalm_free(work->timer);
+        if (work->timer2) qpalm_free(work->timer2);
         # endif /* ifdef QPALM_TIMING */
 
         // Free information

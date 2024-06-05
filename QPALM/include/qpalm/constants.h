@@ -98,8 +98,8 @@ extern "C" {
 #define MAX_RANK_UPDATE 160 /**< maximum rank for the sparse factorization update */
 #define MAX_RANK_UPDATE_FRACTION 0.1 /**< maximum rank (relative to n+m) for the factorization update */
 
-#define RELATIVE_REFINEMENT_TOLERANCE 1e-10 /**< relative tolerance on the residual for linear systems solving */
-#define ABSOLUTE_REFINEMENT_TOLERANCE 1e-12 /**< absolute tolerance on the residual for linear systems solving */
+#define RELATIVE_REFINEMENT_TOLERANCE 1e-100 /**< relative tolerance on the residual for linear systems solving */
+#define ABSOLUTE_REFINEMENT_TOLERANCE 1e-120 /**< absolute tolerance on the residual for linear systems solving */
 #define MAX_REFINEMENT_ITERATIONS     3     /**< maximum number of refinement iterations */ 
 
 #define USE_RL (FALSE) /**< default use of reinforcement learning for updating penalty factors */
