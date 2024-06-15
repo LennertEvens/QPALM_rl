@@ -27,6 +27,7 @@ Currently, QPALM-RL is only available through the Python interface and can be in
 git clone https://gitlab.esat.kuleuven.be/r0791177/QPALM_rl.git --single-branch --depth 1 --recursive
 cd QPALM_rl
 pip install -r requirements.txt
+./scripts/install-eigen.sh
 pip install . --no-build-isolation
 ```
 
