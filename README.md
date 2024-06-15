@@ -22,7 +22,17 @@ Examples are included as well: <https://kul-optec.github.io/QPALM/Doxygen/exampl
 
 ## Installation
 
-Currently, QPALM-RL is only available through the Python interface.
+Currently, QPALM-RL is only available through the Python interface and can be installed by building from source:
+```sh
+git clone https://gitlab.esat.kuleuven.be/r0791177/QPALM_rl.git --single-branch --depth 1 --recursive
+cd QPALM_rl
+pip install -r requirements.txt
+pip install . --no-build-isolation
+```
+
+## Examples
+
+An example of the use of reinforcement learning has been added in examples/python/.
 
 ## License
 
