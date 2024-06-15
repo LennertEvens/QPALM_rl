@@ -89,7 +89,6 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
         work->info->inference_time += qpalm_toc(work->timer2);
         #endif
         work->delta_rl = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
-        qpalm_print("%f\n",work->delta_rl);
     }
 
     work->nb_sigma_changed = 0;
@@ -119,8 +118,6 @@ void update_sigma(QPALMWorkspace* work, solver_common *c) {
                 work->state_index = k;
                 update_state(work);
                 sigma_temp = InferenceClass_do_inference(work->model, work->state, 6);
-                qpalm_print("%f\n", sigma_temp);
-                // sigma_temp = interval_map(work->unmapped_delta, work->model_interval, work->delta_interval);
                 mult_factor = sigma_temp/work->sigma[k];
                 if (work->sigma[k] != sigma_temp) {
                     sigma_changed[work->nb_sigma_changed] = (c_int)k;

@@ -77,3 +77,13 @@ Qup.data[1] = -0.5
 solver.update_Q_A(Qup.data, valuesA)
 solver.solve()
 print(solver.solution.x)
+
+# %% Reinforcement learning
+
+# It is possible to use a feedforward neural network trained with reinforcement learning
+# to update the penalty factors, instead of using a heuristic update rule.
+# In some cases, this could be beneficial.
+
+settings.use_rl = 1
+solver.solve()
+print("Solution with RL: ", solver.solution.x)

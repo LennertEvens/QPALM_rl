@@ -1,0 +1,11 @@
+click==8.1.7
+distlib==0.3.8
+flit_core==3.9.0
+mypy==1.10.0
+mypy-extensions==1.0.0
+ninja==1.11.1.1
+numpy==1.26.4
+py_build_cmake==0.1.8
+pybind11-stubgen==0.16.2
+scipy==1.13.1
+typing_extensions==4.12.2
