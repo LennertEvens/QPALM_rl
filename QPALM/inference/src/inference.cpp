@@ -10,7 +10,7 @@
 InferenceClass::InferenceClass(){
     try {
         // Deserialize the ScriptModule from a file using torch::jit::load().
-        module = torch::jit::load("/volume1/scratch/ppas/others/lennert/thesis_evenslennert/RLQPALM/sac_kkt_1e6.pt");
+        module = torch::jit::load("/volume1/scratch/ppas/others/lennert/QPALM_rl/QPALM/inference/sac_new.pt");
         
         module.to(device_string);
     }

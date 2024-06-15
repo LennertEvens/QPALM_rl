@@ -7,7 +7,7 @@
 #define CLAMP(x,a,b) (MIN(MAX(x,a),b))
 
 c_float interval_map(const double val, const c_float *interval1, const c_float *interval2) {
-    return interval2[0] + (interval2[1]-interval2[0])*(val - interval1[0])/(interval1[1]-interval1[0]);
+    return pow(10,log10(interval2[0]) + (log10(interval2[1])-log10(interval2[0]))*(val - interval1[0])/(interval1[1]-interval1[0]));
 }
 
 void update_state(QPALMWorkspace *work) {
